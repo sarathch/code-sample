@@ -1,0 +1,106 @@
+#!/bin/bash
+#SBATCH --partition=general-compute
+#SBATCH --time=00:15:00
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+##SBATCH --constraint=CPU-L5520
+#SBATCH --exclusive
+##SBATCH --mem=24000
+##SBATCH --mem-per-cpu=4000
+#SBATCH --job-name="chan_cor_100k"
+#SBATCH --output=corr_coefficient_2.out
+#SBATCH --mail-user=sarathch@buffalo.edu
+#SBATCH --mail-type=ALL
+##SBATCH --requeue
+#Specifies that the job will be requeued after a node failure.
+#The default is that the job will not be requeued.
+
+#export | grep SLURM
+echo "SLURM_JOBID="$SLURM_JOBID
+echo "SLURM_JOB_NODELIST"=$SLURM_JOB_NODELIST
+echo "SLURM_NNODES"=$SLURM_NNODES
+echo "SLURMTMPDIR="$SLURMTMPDIR
+
+echo "working directory = "$SLURM_SUBMIT_DIR
+
+module load myhadoop/0.2a/hadoop-0.20.1
+module list
+echo "MY_HADOOP_HOME="$MY_HADOOP_HOME
+echo "HADOOP_HOME="$HADOOP_HOME
+echo "Setting HADOOP to use SLURMTMPDIR on the local disk"
+export HADOOP_DATA_DIR=$SLURMTMPDIR/hadoop-$USER/data
+export HADOOP_LOG_DIR=$SLURMTMPDIR/hadoop-$USER/log
+echo "HADOOP_DATA_DIR="$HADOOP_DATA_DIR
+echo "HADOOP_LOG_DIR="$HADOOP_LOG_DIR
+#### Set this to the directory where Hadoop configs should be generated
+# Don't change the name of this variable (HADOOP_CONF_DIR) as it is
+# required by Hadoop - all config files will be picked up from here
+#
+# Make sure that this is accessible to all nodes
+export HADOOP_CONF_DIR=$SLURM_SUBMIT_DIR/config
+echo "MyHadoop config directory="$HADOOP_CONF_DIR
+### Set up the configuration
+# Make sure number of nodes is the same as what you have requested from PBS
+# usage: $MY_HADOOP_HOME/bin/pbs-configure.sh -h
+echo "Set up the configurations for myHadoop"
+# this is the non-persistent mode
+export PBS_NODEFILE=nodelist.$$
+srun --nodes=${SLURM_NNODES} bash -c 'hostname' | sort > $PBS_NODEFILE
+echo "Created PBS_NODEFILE:"
+cat $PBS_NODEFILE
+NNuniq=`cat $PBS_NODEFILE| uniq | wc -l`
+echo "Number of nodes in nodelist="$NNuniq
+$MY_HADOOP_HOME/bin/pbs-configure.sh -n $NNuniq -c $HADOOP_CONF_DIR
+
+sleep 15
+# this is the persistent mode
+# $MY_HADOOP_HOME/bin/pbs-configure.sh -n 4 -c $HADOOP_CONF_DIR -p -d /oasis/cloudstor-group/HDFS
+
+#### Format HDFS, if this is the first time or not a persistent instance
+echo "Format HDFS"
+$HADOOP_HOME/bin/hadoop --config $HADOOP_CONF_DIR namenode -format
+
+sleep 15
+
+echo "start dfs"
+$HADOOP_HOME/bin/start-dfs.sh
+
+sleep 15
+
+echo "copy file to dfs"
+$HADOOP_HOME/bin/hadoop --config $HADOOP_CONF_DIR dfs -put Mat_10_10.txt Mat_10_10.txt /
+
+sleep 15
+
+echo "ls files in dfs"
+$HADOOP_HOME/bin/hadoop --config $HADOOP_CONF_DIR dfs -ls /
+
+echo "start jobtracker (mapred)"
+$HADOOP_HOME/bin/start-mapred.sh
+
+echo "ls files in dfs"
+$HADOOP_HOME/bin/hadoop --config $HADOOP_CONF_DIR fs -ls /
+
+echo "run computation"
+$HADOOP_HOME/bin/hadoop --config $HADOOP_CONF_DIR jar Cal_Cor_Hd.jar org.chandu.Corr_Mat /Mat_10_10.txt /output 10
+
+echo "ls files in dfs"
+$HADOOP_HOME/bin/hadoop --config $HADOOP_CONF_DIR fs -ls /output
+
+echo "view output results"
+$HADOOP_HOME/bin/hadoop --config $HADOOP_CONF_DIR fs -cat /output/part-r-00000
+
+echo "Copy output from HDFS to local directory"
+$HADOOP_HOME/bin/hadoop --config $HADOOP_CONF_DIR fs -get /output /output
+
+echo "stop jobtracker (mapred)"
+$HADOOP_HOME/bin/stop-mapred.sh
+
+echo "stop dfs"
+$HADOOP_HOME/bin/stop-dfs.sh
+
+
+#### Clean up the working directories after job completion
+echo "Clean up"
+$MY_HADOOP_HOME/bin/pbs-cleanup.sh -n $NNuniq
+echo
