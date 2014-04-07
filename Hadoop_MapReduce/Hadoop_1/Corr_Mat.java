@@ -1,4 +1,3 @@
-
 package org.chandu;
 
 import java.io.IOException;
@@ -23,6 +22,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser; 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+
 
 public class Corr_Mat {
 
