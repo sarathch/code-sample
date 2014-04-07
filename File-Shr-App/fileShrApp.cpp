@@ -23,11 +23,6 @@
 #include <netdb.h>
 #include <iostream>
 #include <list>
-ut:
-Although I implemented Jacobson/Karel’s Algorithm for calculating Timeouts, I hard coded timeout to be 10, for which protocols give better throughput.
-The timeout pattern observed will gradually raise till 27 to 28 TU. However with this timeout , The messages which are issued every 50 TU will run out before delivering all the messages.
-The Timeout shouldn’t be too high which slows down the transfer where as it shouldn’t be very low which causes unnecessary retransformations.
-Although, I spent considerable time trying to change the timeout patterns when there is heavy traffic in the simulator. I just couldn’t achieve better performance than setting timeout to 10. No wonder It is the average RTT time for a packet as mentioned.
 #include <sstream>
 #include <map>
 #include <sys/sendfile.h>
@@ -36,6 +31,7 @@ Although, I spent considerable time trying to change the timeout patterns when t
 #include <errno.h>
 #include <vector>
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 
@@ -791,7 +787,6 @@ void getMyIPAddress (char* command, char* port) {
     inet_pton(AF_INET, dnsIP, &ipv4addr);
     // getting host details from IP address
     he = gethostbyaddr(&ipv4addr, sizeof ipv4addr, AF_INET);
-    cout << "bazinga!" << endl;
     // Connecting to google DNS to get IP address of this process
     userConnect (he->h_name, dnsPort, port, command);          
 }
@@ -814,7 +809,7 @@ void userConnect ( char* sIP, char* sPort, string my_port, char* command )
     char s[INET6_ADDRSTRLEN];
     struct addrinfo *servinfo,*p,hints;
     int sockfd;
-    int SETUP_ERROR ;
+    int SETUP_ERROR = 0;
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
@@ -901,11 +896,8 @@ void userConnect ( char* sIP, char* sPort, string my_port, char* command )
             if (inet_ntop(local_addr.sin_family, &(local_addr.sin_addr), myip, sizeof(myip)) == NULL) {
             	perror("inet_ntop");
             }
-    //        else
-      //          cout << "HOST IP Address:: " << myip << endl;
         }
-    }//else
-//	cout << "SETUP_ERROR" << endl;
+    }
 }
 
 /*
