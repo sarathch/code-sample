@@ -1,10 +1,10 @@
-
 #include "udxinc.h"
 #include <math.h>
 
 using namespace nz::udx_ver2;
 
 class cal_corr: public Uda{
+	
 	public:
 	double sum,N,prod,count;
 	double xSdev,ySdev;
@@ -28,6 +28,7 @@ void cal_corr::initializeState(){
 }
 
 void cal_corr::accumulate(){
+	
 	double *corr = doubleState(0);
 	bool corrNull = isStateNull(0);
 	double *div = doubleState(1);
