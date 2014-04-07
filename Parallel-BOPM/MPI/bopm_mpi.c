@@ -5,7 +5,6 @@
 #include <mpi.h>
 
 
-
 /**********************CONSTANT-DEFINITIONS*******************/
 #define ONE 1
 #define UNITY 1.0
