@@ -237,13 +237,6 @@ public class LinkList<Item extends Comparable<Item>> implements Iterable<Item>
 	{
 		if (index <= size)
 		{
-			int step = 1;
-			Node temp = head;
-                        while(step!=index)
-                        {
-                                temp = temp.next;
-                                step++;
-                        }
 		
 			Item junk = null;
 			Node dummy = new Node(junk);
