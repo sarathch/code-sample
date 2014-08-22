@@ -1,0 +1,50 @@
+#!/bin/bash
+##SBATCH --constraint=CPU-E5645
+#SBATCH --cpus-per-task=1
+#SBATCH --error=output.out
+#SBATCH --export=SLURM_CPUS_PER_TASK,SLURM_JOB_NAME,SLURM_NTASKS_PER_NODE,SLURM_PRIO_PROCESS,SLURM_SUBMIT_DIR,SLURM_SUBMIT_HOST
+#SBATCH --job-name=SEQ_LUD
+#SBATCH --mail-type=END
+#SBATCH --mail-user=sarathch@buffalo.edu
+#SBATCH --mem=48000
+#SBATCH --nodes=1
+#SBATCH --output=seq_80k.out
+#SBATCH --tasks-per-node=1
+#SBATCH --partition=debug
+
+#construct nodefile
+SLURM_NODEFILE=my_slurm_nodes.$$
+srun hostname | sort > $SLURM_NODEFILE
+
+tstart=`date`
+echo "###### start time: $tstart"
+
+cd $SLURM_SUBMIT_DIR
+echo "working directory = "$SLURM_SUBMIT_DIR
+
+# load intel and intel-mpi modules
+echo "Loading matlab ..."
+module load intel-mpi/4.1.1
+module load intel/13.1
+module list
+ulimit -s unlimited
+
+# determine node information
+echo "Determining node information ..."
+UNIQ_HOSTS=hosts.$$
+cat $SLURM_NODEFILE | uniq > $UNIQ_HOSTS
+NNuniq=`cat $UNIQ_HOSTS | wc -l`
+NPROCS=`cat $SLURM_NODEFILE | wc -l`
+
+# launch job
+echo "Launching job using srun and intel-mpi ..."
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+srun -n $NPROCS ./BOPM 80000
+
+echo "intel-mpi job is complete!"
+
+echo "All Done!"
+
+tend=`date`
+echo "###### end time: $tend"
+

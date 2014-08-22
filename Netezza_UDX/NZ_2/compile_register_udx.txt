@@ -1,0 +1,76 @@
+*************************************************************************************************
+ DIFF_(INPUT_TABLE_COLUMN X, MEAN X^) UDTF 
+*************************************************************************************************
+
+INTRO::
+
+  DIFF_ UDTF generates a table with values X - X^
+
+COMPILE AND REGISTER::
+
+nzudxcompile --sig "diff_(DOUBLE,DOUBLE)" --return "TABLE(XDiff DOUBLE)" --class diff_ --version 2 diff_.cpp --user sarathch --pw falloct2013 
+--db sarathch_db
+
+SQL EXECUTION COMMAND::
+
+Syntax::
+
+Select Column_Diff from TABLE ( DIFF_(INPUT_COLUMN,MEAN) );
+
+Example::
+
+Select t.X , t.Y,  f.XDiff, g.XDiff from obs AS t , X_mean, TABLE ( diff_(X,xMean) ) AS f, TABLE (diff_(Y,yMean)) AS g;
+
+**************************************************************************************************
+CALDEV(DIFF_UDTF_TABLE_COLUMN) UDA
+*************************************************************************************************
+
+INTRO::
+
+   CALDEV UDA generates scalar output with values sqrt[(X-X^) ^ 2]
+
+COMPILE AND REGISTER::
+
+nzudxcompile /panasas/scratch/chansan/Netezza_test/cal_dev.cpp -o cal_dev.o --sig "caldev(double)" --version 2 --return double --class cal_dev 
+--state "(double,double)" --user sarathch --pw falloct2013 --db sarathch_db
+
+SQL EXECUTION COMMAND::
+
+Syntax::
+
+ select caldev(COLUMN NAME) FROM TABLE NAME;
+
+Example::
+
+ select caldev(XDIFF) FROM obs_diff;
+
+********************************************************************************************************************************
+CALCORR(COLUMN1.DIFF_UDTF_TABLE_COLUMN, COLUMN2.DIFF_UDTF_INPUT_COLUMN, CALDEV(COLUMN1), CALDEV(COLUMN2)) UDA 
+********************************************************************************************************************************
+
+INTRO::
+		
+	CALCORR UDA outputs correlation between two variables using below formula
+
+
+		For i = 1 to N	, SUM[(Xi-X^)*(Yi-Y^)] / CALDEV(Xi)*CALDEV(Yi)
+				where N= Number of OBSERVATIONS/rows
+
+COMPILE and REGISTER::
+
+nzudxcompile /panasas/scratch/chansan/Netezza_test/cal_corr.cpp -o cal_corr.o --sig "calcorr(double,double)" --version 2 --return double --class cal_corr
+--state "(double,double)" --user sarathch --pw falloct2013 --db sarathch_db
+
+SQL EXECUTION COMMAND:
+
+Syntax::
+
+  select calcorr( VARIABLE1.DIFF_,VARIABLE2.DIFF_,VARIABLE1.CALDEV,VARIABLE2.CALDEV) from TABLE NAME;
+
+EXAMPLE::
+
+select calcorr(XDIFF,YDIFF,XSDEV,YSDEV) from obs_devdiff;
+
+
+
+
