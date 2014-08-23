@@ -2,8 +2,7 @@
 /*
 *    Fun Code- Implementing a Binary Tree...O wait! Not BST..just Btree ;D
 *    BuddyChallenge- Lowest Common Ancestor(line-100) || Vertical Node Sum(line-117)
-*    @StartTime-2:53 PM
-*    @EndTime- 4 PM
+*    @Time-2:53 PM
 */
 
 import java.util.Queue;
@@ -91,7 +90,7 @@ public class BinaryTree<Item extends Comparable<Item>>
 		else
 		{
 		InOrderDisplay(root.left);
-		System.out.print(root.item + "->" +root.distance+ "***");
+		System.out.print(root.item + "->");
 		InOrderDisplay(root.right);
 		}
 	}
@@ -119,7 +118,8 @@ public class BinaryTree<Item extends Comparable<Item>>
 		map = new HashMap<Integer, ArrayList<Item>>();
 		findDistance(root, size);
 		map = alignedNodes(map, root);
-		// Moved below code to Main Method to do numeric calculations(summation) - Generic type summations need Numeric Interface
+		// Moved below code to Main Method to do numeric calculations(summation) 
+		// Generic type summations need Numeric Interface
 		/*int line =0;
 		for (Integer i : map.keySet())
 		{
@@ -178,7 +178,7 @@ public class BinaryTree<Item extends Comparable<Item>>
 		Integer[] num = new Integer[2];
 		num[0] = sc.nextInt();
 		num[1] = sc.nextInt();
-		System.out.println("LCA:-"+tree.LCA(tree.root, 0, num));
+		System.out.println("LCA : "+tree.LCA(tree.root, 0, num));
 		tree.verticalSum();
 		// Displaying vertical line sum
 		int line =0;
