@@ -1,6 +1,7 @@
 
 /*
 *Implementing Linked List API to my understanding
+*BuddyChallenge: Reverse a List (line 222), Reverse K-set of elements in the list (line 237)
 *@Author: Sarath
 *@start time: 1:21 AM
 *@end time : 2: 30 AM
@@ -237,13 +238,6 @@ public class LinkList<Item extends Comparable<Item>> implements Iterable<Item>
 	{
 		if (index <= size)
 		{
-			int step = 1;
-			Node temp = head;
-                        while(step!=index)
-                        {
-                                temp = temp.next;
-                                step++;
-                        }
 		
 			Item junk = null;
 			Node dummy = new Node(junk);
