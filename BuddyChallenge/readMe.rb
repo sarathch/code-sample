@@ -1,5 +1,5 @@
 
 /*
-*	Coded my friend's hand picked problems
-*	Thanks Sarma T	:D
+*	Coded few hand picked problems
+*	Thanks Sarma T for suggesting few	:D
 */
