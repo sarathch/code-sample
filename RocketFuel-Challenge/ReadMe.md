@@ -3,9 +3,11 @@
 
 <h2> Inputs: </h2>
 
+<blockquote>
 <p> <strong>tail -n [+k/k] [file_name1] [file_name2] [file_name3] .... </strong> </p>
 
 <p> <strong>tail -f [file_name1] [file_name2] [file_name3] .... </strong></p>
+</blockquote>
 
 <p>Note: You can give "quit" to quit application and "stop -f" to stop monitoring.</p>
  
