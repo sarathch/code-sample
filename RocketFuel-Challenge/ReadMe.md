@@ -4,8 +4,9 @@
 <h2> Inputs: </h2>
 
 <p>tail -n [+k/k] [file_name1] [file_name2] [file_name3] .... 
-tail -f [file_name1] [file_name2] [file_name3] ....       
-Note: You can give "quit" to quit application and "stop -f" to stop monitoring.</p>
+tail -f [file_name1] [file_name2] [file_name3] .... </p>
+
+<p>Note: You can give "quit" to quit application and "stop -f" to stop monitoring.</p>
  
 <h2> Design: </h2>
 
