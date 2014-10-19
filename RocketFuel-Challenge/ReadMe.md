@@ -3,11 +3,9 @@
 
 <h2> Inputs: </h2>
 
-<div style="background-color:rgba(0, 0, 0, 0.0470588); text-align:center; vertical-align: middle; padding:40px 0;">
-    <p> <strong>tail -n [+k/k] [file_name1] [file_name2] [file_name3] .... </strong> </p>
+    <strong>tail -n [+k/k] [file_name1] [file_name2] [file_name3] .... </strong>
 
-    <p> <strong>tail -f [file_name1] [file_name2] [file_name3] .... </strong></p>
-</div>
+    <strong>tail -f [file_name1] [file_name2] [file_name3] .... </strong>
 
 <p>Note: You can give "quit" to quit application and "stop -f" to stop monitoring.</p>
  
