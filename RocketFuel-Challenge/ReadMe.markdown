@@ -1,22 +1,25 @@
 
-<h1> TAIL COMMAND - UNIX Implementation </h1>
-<h2> Inputs: </h2>
+TAIL COMMAND - UNIX Implementation
+==================================
 
-    tail -n [+k/k] [file_name1] [file_name2] [file_name3] ....
+Inputs:
+-------
 
-    tail -f [file_name1] [file_name2] [file_name3] ....
+    **tail -n [+k/k] [file_name1] [file_name2] [file_name3] ....**
 
-<p>Note: You can give "quit" to quit application and "stop -f" to stop monitoring.</p>
+    **tail -f [file_name1] [file_name2] [file_name3] ....**
+
+>Note: You can give "quit" to quit application and "stop -f" to stop monitoring.</p>
  
-<h2> Design: </h2>
+### Design: 
 
-   <p>This project contains 3 classes.</p>
+   >This project contains 3 classes.</p>
    
-   <h3> Solution Class </h3>
-       <p>This class is used to test TailCommand implementation . It Does tail command line processing and calls our Tail command implementation API.</p>
+   ###### Solution Class
+   > This class is used to test TailCommand implementation . It Does tail command line processing and calls our Tail command implementation API.
 
-   <h3>TailCommand Class </h3> 
-   	<p>This Class contains APIS that implements tail command. USed RandomAccessFile API which handles large files and it does not bring the file into the memory as it randomly seeks to line number/Byte number in the File, So This handles big files as well. It implements both -n with +k/k  and -f options.</p>
+   ######TailCommand Class
+   > This Class contains APIS that implements tail command. USed RandomAccessFile API which handles large files and it does not bring the file into the memory as it randomly seeks to line number/Byte number in the File, So This handles big files as well. It implements both -n with +k/k  and -f options.
 
-   <h3>PrintThread Class </h3> 
-   	<p>This thread class will monitor the file for updates. It is used for -f option which prints appended lines.</p>
+   ######PrintThread Class
+   > This thread class will monitor the file for updates. It is used for -f option which prints appended lines.
