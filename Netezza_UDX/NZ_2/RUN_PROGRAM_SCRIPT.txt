@@ -1,0 +1,49 @@
+
+
+Command to execute 'CORR_UDX_STOPRO.SQL'
+
+1.) $$nzsql -f corr_udx_stopro.sql
+	output:: PROCEDURE CREATED
+
+2.) $$nzsql -c 'EXECUTE netezza_correlation_matrix($rows,$columns)';
+		here $rows    = OBSERVATIONS
+		     $columns = VARIABLES
+
+    BASH output:: TIME TAKEN FOR UDX 
+	          TIME TAKEN FOR NDA
+
+    TABLES CREATED::
+
+		NZ_INPUT_TABLE_$rows_$cols     ::===> INPUT MATRIX OF SIZE rows and cols
+		NZ_INP_MEAN_$rows_$cols      ::===> MEAN OF EACH COLUMN IN INPUT TABLE
+		NZ_INPMEAN_DIFF_$rows_$cols  ::===> TABLE WITH VALUES RETURNED BY DIFF_ UDTF
+		NZ_OBS_SDEV_$rows_$cols      ::===> TABLE WITH VALUES RETURNED BY CALDEV UDA
+		NZ_DIFF_SDEV_$rows_$cols     ::===> TABLE WITH CALDEV VALUES AND DIFF_ VALUES FOR INPUT TO CALCORR UDA
+		NZ_OBS_CORR_$rows_$cols      ::===> TABLE WITH VALUES RETURNED BY CALCORR UDA
+		NZA_CORR_$rows_$cols 	     ::===> TABLE WITH VALUES RETURNED BY CORR_MATRIX_AGG NETEZZA ANALYTIC FUNCTION		
+
+
+Command to execute 'DROP_TABLES.SQL'
+
+1.) $$nzsql -f drop_tables.sql
+
+	output:: PROCEDURE CREATED
+
+2.) $$nzsql -c 'EXECUTE drop_tables($rows,$cols)';
+
+	output:
+
+		TABLES DROPPED;
+
+/*NOTE::
+
+FOR SPAWNING HUGE INPUT MATRICES. MANUALLY INSERTED INTO ALREADY CREATED TABLE USING
+
+INSERT INTO TABLE-NAME SELECT * FROM TABLE-NAME; QUERY
+		
+IF INPUT MATRIX IS ALREADY SPAWNED USE 'SPAWN_STO_PRO.SQL'
+
+i.e NZSQL -f SPAWN_STO_PRO.SQL
+	$$nzsql -c 'EXECUTE correlation_matrix($rows,$columns)'; */
+
+	 

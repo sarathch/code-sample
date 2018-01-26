@@ -1,0 +1,39 @@
+#!/bin/sh
+#SBATCH --partition=debug
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+##SBATCH --constraint=CPU-
+#SBATCH --mem=48000
+#SBATCH -c 15
+#SBATCH --job-name="omp2_t"
+#SBATCH --output=omp15_20k.out
+#SBATCH --mail-user=sarathch@buffalo.edu
+#SBATCH --mail-type=ALL
+##SBATCH --requeue
+#Specifies that the job will be requeued after a node failure.
+#The default is that the job will not be requeued.
+
+
+#export | grep SLURM
+echo "SLURM_JOBID="$SLURM_JOBID
+echo "SLURM_JOB_NODELIST"=$SLURM_JOB_NODELIST
+echo "SLURM_NNODES"=$SLURM_NNODES
+echo "SLURMTMPDIR="$SLURMTMPDIR
+
+echo "working directory = "$SLURM_SUBMIT_DIR
+
+module load intel/13.1
+module load intel-mpi/4.1.1
+module list
+ulimit -s unlimited
+#
+#export I_MPI_DEBUG-4
+#NPROCS=`srun --nodes=${SLURM_NNODES} bash -c 'hostname' |wc -l`
+#echo "NPROCS="$NPROCS
+echo "Launch helloworld with srun"
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+srun ./BOPMOpen 20000 15
+echo "time 60000: `date`"
+
+#
+echo "All Done!"
